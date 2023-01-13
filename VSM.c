@@ -8,7 +8,8 @@ void yyerror(const char *s);
 
 int DebugSW=0;                                   /* デバッグモード表示 */
 
-static int Pctr=0, SP=0, Freg=0;
+static int  SP=0, Freg=0;
+int Pctr = 0;
 static int InsCount=0, MaxSD=0, MinFR=DSEG_SIZE, MaxPC=0, CallC=0;
 
 static INSTR Iseg[ISEG_SIZE];                    /* 命令セグメント */

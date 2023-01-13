@@ -60,7 +60,7 @@
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 19 "rep3.y"
+#line 18 "rep3.y"
 {
     int     ival;
     double  rval;

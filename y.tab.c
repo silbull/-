@@ -86,7 +86,7 @@
 
 
 /* Copy the first part of user declarations.  */
-#line 3 "rep3.y"
+#line 2 "rep3.y"
 
 #include <ctype.h>
 #include <stdio.h>
@@ -94,13 +94,13 @@
 #include <string.h>
 #include <math.h>
 #include "VSM.h"
-#define M_SIZE 16
+
 extern FILE *yyin;
+extern int Pctr;
 
 int yylex(void);
 void yyerror(const char *s);
 
-double Memory[M_SIZE];
 
 
 /* Enabling traces.  */
@@ -123,7 +123,7 @@ double Memory[M_SIZE];
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 19 "rep3.y"
+#line 18 "rep3.y"
 {
     int     ival;
     double  rval;
@@ -428,8 +428,8 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    35,    35,    37,    38,    39,    43,    44,    45,    46,
-      47,    48,    49
+       0,    34,    34,    36,    37,    38,    42,    43,    44,    45,
+      46,    47,    48
 };
 #endif
 
@@ -1342,47 +1342,47 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 35 "rep3.y"
+#line 34 "rep3.y"
     {Pout(HALT);}
     break;
 
   case 4:
-#line 38 "rep3.y"
+#line 37 "rep3.y"
     { Pout(OUTPUT); }
     break;
 
   case 5:
-#line 39 "rep3.y"
+#line 38 "rep3.y"
     { yyerrok; }
     break;
 
   case 6:
-#line 43 "rep3.y"
+#line 42 "rep3.y"
     { Pout((yyvsp[(2) - (3)].ival)); }
     break;
 
   case 7:
-#line 44 "rep3.y"
+#line 43 "rep3.y"
     { Pout((yyvsp[(2) - (3)].ival)); }
     break;
 
   case 8:
-#line 45 "rep3.y"
+#line 44 "rep3.y"
     { if ((yyvsp[(1) - (2)].ival) == SUB) Pout(CSIGN); }
     break;
 
   case 10:
-#line 47 "rep3.y"
+#line 46 "rep3.y"
     { Pout((yyvsp[(1) - (4)].ival));  }
     break;
 
   case 11:
-#line 48 "rep3.y"
+#line 47 "rep3.y"
     {  Cout(PUSHI,(double)(yyvsp[(1) - (1)].ival)); }
     break;
 
   case 12:
-#line 49 "rep3.y"
+#line 48 "rep3.y"
     { Cout(PUSHI, (yyvsp[(1) - (1)].rval)); }
     break;
 
@@ -1602,62 +1602,33 @@ yyreturn:
 }
 
 
-#line 53 "rep3.y"
-
-
-int        StartP=0, SymPrintSW=0;                  /* オプション用の */
-static int ExecSW=1, ObjOutSW=0, TraceSW=0, StatSW=0;   /* フラグ変数 */
-
-static int  ErrorC=0;                               /* エラーカウンタ */
-static char SourceFile[20];
-
-
-static void SetUpOpt(int, char *[]); /* ポインタ */
+#line 52 "rep3.y"
 
 FILE *fp;
 int main(int argc, char* argv[]){
 
 
-  ObjOutSW=1;
-  SetUpOpt(argc, argv);                             /* オプションの処理 */
-  if (SourceFile[0] != NULL)                        /* 入力ファイルを */
-    if ((yyin=fopen(SourceFile, "r")) == NULL) {         /* オープン */
+int  ObjOutSW=1;
+  
+    if ((yyin=fopen(argv[1], "r")) == NULL) {         /* オープン */
       fprintf(stderr, "Source file cannot be opened.");
       exit(-1); }                                   /* コンパイル中止 */
-  yyparse();                                        /* コンパイル */
+  yyparse();                                        /* コンパイル (.tcファイルの内容を解析して、Isegに書き込んでる)*/
   if (ObjOutSW) {
-        fp = fopen("test.to", "w");
+        fp = fopen("source.to", "w");
         if(fp == NULL){
                 printf("cannot open\n");
                 exit(-1);
         }
-        for (int i = 0; i<=PC()-1; i++){
+        for (int i = 0; i<=Pctr-1; i++){
     FprintIns(i, fp);
         }
         fclose(fp);
 }
-        //DumpIseg(0, PC()-1);              /* 目的コード表示 */
 }
 
-static void SetUpOpt(int argc, char *argv[])
-{
-  char *s;
 
-  if (--argc>0 && (*++argv)[0]=='-') {             /* オプション指定 ? */
-    for (s = *argv+1; *s != '\0'; s++)             /* オプションの走査 */
-      switch(tolower(*s)) {                        /* 小文字でチェック */
-        case 'c': StatSW = 1;     break;           /* 実行データの表示 */
-        case 'd': DebugSW = 1;    break;           /* デバッグモード */
-        case 'n': ExecSW = 0;     break;           /* コンパイルだけ */
-        case 'o': ObjOutSW = 1;   break;           /* 目的コードの表示 */
-        case 's': SymPrintSW = 1; break;           /* 記号表の表示 */
-        case 't': TraceSW = 1;    break; }         /* トレースモード */
-    argc--; argv++; }
-  if (argc > 0)                                    /* 入力ファイル名を */
-    strcpy(SourceFile, *argv);                     /* コピー */
-}
 
-        
 
 
 

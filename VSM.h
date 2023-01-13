@@ -23,7 +23,6 @@ void SetPC(int N);                          /* Pctrのセット */
 int  PC(void);                              /* Pctrの読出し */
 int  StartVSM(int StartAddr, int TraceSW);  /* 実行開始 */
 
-void writeObjectCode(FILE *fp);  
 void FprintIns(int loc, FILE *fp);
 
 void SetI(OP OPcode, int Flag, double Addr);   /* 命令の書込み */
