@@ -1,0 +1,269 @@
+Grammar
+
+    0 $accept: expr_list $end
+
+    1 expr_list: line
+
+    2 line: /* empty */
+    3     | line expr ';'
+    4     | line error ';'
+
+    5 expr: expr ADDOP expr
+    6     | expr MULOP expr
+    7     | ADDOP expr
+    8     | '(' expr ')'
+    9     | FUNCOP '(' expr ')'
+   10     | INTC
+   11     | REALC
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+'(' (40) 8 9
+')' (41) 8 9
+';' (59) 3 4
+error (256) 4
+INTC (258) 10
+REALC (259) 11
+ADDOP (260) 5 7
+MULOP (261) 6
+FUNCOP (262) 9
+UMINUS (263)
+
+
+Nonterminals, with rules where they appear
+
+$accept (12)
+    on left: 0
+expr_list (13)
+    on left: 1, on right: 0
+line (14)
+    on left: 2 3 4, on right: 1 3 4
+expr (15)
+    on left: 5 6 7 8 9 10 11, on right: 3 5 6 7 8 9
+
+
+state 0
+
+    0 $accept: . expr_list $end
+
+    $default  reduce using rule 2 (line)
+
+    expr_list  go to state 1
+    line       go to state 2
+
+
+state 1
+
+    0 $accept: expr_list . $end
+
+    $end  shift, and go to state 3
+
+
+state 2
+
+    1 expr_list: line .
+    3 line: line . expr ';'
+    4     | line . error ';'
+
+    error   shift, and go to state 4
+    INTC    shift, and go to state 5
+    REALC   shift, and go to state 6
+    ADDOP   shift, and go to state 7
+    FUNCOP  shift, and go to state 8
+    '('     shift, and go to state 9
+
+    $end  reduce using rule 1 (expr_list)
+
+    expr  go to state 10
+
+
+state 3
+
+    0 $accept: expr_list $end .
+
+    $default  accept
+
+
+state 4
+
+    4 line: line error . ';'
+
+    ';'  shift, and go to state 11
+
+
+state 5
+
+   10 expr: INTC .
+
+    $default  reduce using rule 10 (expr)
+
+
+state 6
+
+   11 expr: REALC .
+
+    $default  reduce using rule 11 (expr)
+
+
+state 7
+
+    7 expr: ADDOP . expr
+
+    INTC    shift, and go to state 5
+    REALC   shift, and go to state 6
+    ADDOP   shift, and go to state 7
+    FUNCOP  shift, and go to state 8
+    '('     shift, and go to state 9
+
+    expr  go to state 12
+
+
+state 8
+
+    9 expr: FUNCOP . '(' expr ')'
+
+    '('  shift, and go to state 13
+
+
+state 9
+
+    8 expr: '(' . expr ')'
+
+    INTC    shift, and go to state 5
+    REALC   shift, and go to state 6
+    ADDOP   shift, and go to state 7
+    FUNCOP  shift, and go to state 8
+    '('     shift, and go to state 9
+
+    expr  go to state 14
+
+
+state 10
+
+    3 line: line expr . ';'
+    5 expr: expr . ADDOP expr
+    6     | expr . MULOP expr
+
+    ADDOP  shift, and go to state 15
+    MULOP  shift, and go to state 16
+    ';'    shift, and go to state 17
+
+
+state 11
+
+    4 line: line error ';' .
+
+    $default  reduce using rule 4 (line)
+
+
+state 12
+
+    5 expr: expr . ADDOP expr
+    6     | expr . MULOP expr
+    7     | ADDOP expr .
+
+    $default  reduce using rule 7 (expr)
+
+
+state 13
+
+    9 expr: FUNCOP '(' . expr ')'
+
+    INTC    shift, and go to state 5
+    REALC   shift, and go to state 6
+    ADDOP   shift, and go to state 7
+    FUNCOP  shift, and go to state 8
+    '('     shift, and go to state 9
+
+    expr  go to state 18
+
+
+state 14
+
+    5 expr: expr . ADDOP expr
+    6     | expr . MULOP expr
+    8     | '(' expr . ')'
+
+    ADDOP  shift, and go to state 15
+    MULOP  shift, and go to state 16
+    ')'    shift, and go to state 19
+
+
+state 15
+
+    5 expr: expr ADDOP . expr
+
+    INTC    shift, and go to state 5
+    REALC   shift, and go to state 6
+    ADDOP   shift, and go to state 7
+    FUNCOP  shift, and go to state 8
+    '('     shift, and go to state 9
+
+    expr  go to state 20
+
+
+state 16
+
+    6 expr: expr MULOP . expr
+
+    INTC    shift, and go to state 5
+    REALC   shift, and go to state 6
+    ADDOP   shift, and go to state 7
+    FUNCOP  shift, and go to state 8
+    '('     shift, and go to state 9
+
+    expr  go to state 21
+
+
+state 17
+
+    3 line: line expr ';' .
+
+    $default  reduce using rule 3 (line)
+
+
+state 18
+
+    5 expr: expr . ADDOP expr
+    6     | expr . MULOP expr
+    9     | FUNCOP '(' expr . ')'
+
+    ADDOP  shift, and go to state 15
+    MULOP  shift, and go to state 16
+    ')'    shift, and go to state 22
+
+
+state 19
+
+    8 expr: '(' expr ')' .
+
+    $default  reduce using rule 8 (expr)
+
+
+state 20
+
+    5 expr: expr . ADDOP expr
+    5     | expr ADDOP expr .
+    6     | expr . MULOP expr
+
+    MULOP  shift, and go to state 16
+
+    $default  reduce using rule 5 (expr)
+
+
+state 21
+
+    5 expr: expr . ADDOP expr
+    6     | expr . MULOP expr
+    6     | expr MULOP expr .
+
+    $default  reduce using rule 6 (expr)
+
+
+state 22
+
+    9 expr: FUNCOP '(' expr ')' .
+
+    $default  reduce using rule 9 (expr)
